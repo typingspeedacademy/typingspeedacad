@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Exercise</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="typing-exercise-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Typing Speed Academy</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="free-exercises.html">Free Exercises</a></li>
+                <li><a href="premium.html">Premium Course</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+    <div class="exercises-container">
+        <h1 class="section-title">Typing Exercises</h1>
+        
+        <div class="exercise-controls">
+            <select id="language-selector">
+                <option value="english">English</option>
+                <option value="arabic">العربية</option>
+            </select>
+            
+            <select id="difficulty-selector">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            
+            <button id="start-button" class="btn btn-primary">Start Exercise</button>
+        </div>
+        
+        <div id="exercise-area" class="hidden">
+            <div id="sentence-display" class="sentence-container"></div>
+            <textarea id="user-input" placeholder="Start typing here..."></textarea>
+            <div id="keyboard-container"></div>
+        <div id="stats">
+                <span id="timer">00:00</span>
+                <span id="wpm">0 WPM</span>
+                <span id="accuracy">100%</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sentences for different languages and difficulties
+        const sentences = {
+            english: {
+                easy: [
+                    "A quick brown fox.",
+                    "Lazy dogs sleep soundly.",
+                    "Zebras jump very high."
+                ],
+                medium: [
+                    "The five boxing wizards jump quickly and deftly.",
+                    "Bright vixens jump; dozy fowl quack loudly.",
+                    "Jinxed wizards pluck ivy from the big old quilt."
+                ],
+                hard: [
+                    "Sphinx of black quartz, judge my vow; the quick brown fox jumps over the lazy dog near the riverbank full of reeds.",
+                    "Crazy Fredrick bought many very exquisite opal jewels, then promptly lost them in the bustling market square.",
+                    "The job requires extra pluck and zeal from every young wage earner, especially when facing challenging economic conditions and tight deadlines."
+                ]
+            },
+            arabic: {
+                easy: [
+                    "قط سريع يقفز.",
+                    "كلب كسول ينام.",
+                    "كتاب مفيد جدا."
+                ],
+                medium: [
+                    "العلم في الصغر كالنقش على الحجر المتين.",
+                    "الصبر مفتاح الفرج والنجاح في كل الأمور.",
+                    "الوقت كالسيف إن لم تقطعه قطعك بسرعة."
+                ],
+                hard: [
+                    "القراءة غذاء العقل والروح وتفتح آفاق المعرفة والثقافة للإنسان، وتجعله أكثر وعياً بما يدور حوله من أحداث وتطورات.",
+                    "اللغة العربية لغة الضاد والبيان، تتميز بجمال أساليبها وثراء مفرداتها وقدرتها على التعبير عن أدق المعاني والأفكار.",
+                    "التعليم في الصغر كالنقش على الحجر، يثبت في الذهن ويصعب محوه، وهو أساس بناء المجتمعات وتقدمها وازدهارها في شتى المجالات."
+                ]
+            }
+        };
+
+        
+        // DOM elements
+        const languageSelector = document.getElementById('language-selector');
+        const difficultySelector = document.getElementById('difficulty-selector');
+        const startButton = document.getElementById('start-button');
+        const exerciseArea = document.getElementById('exercise-area');
+        const sentenceDisplay = document.getElementById('sentence-display');
+        const userInput = document.getElementById('user-input');
+        const timerElement = document.getElementById('timer');
+        const wpmElement = document.getElementById('wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        
+        // DOM elements (continued)
+        const keyboardContainer = document.getElementById('keyboard-container');
+
+        // Exercise state
+        let currentSentence = '';
+        let startTime;
+        let timerInterval;
+        
+        // Event listeners
+        startButton.addEventListener('click', startExercise);
+        userInput.addEventListener('input', checkInput);
+        userInput.addEventListener('keydown', handleKeyDown);
+        userInput.addEventListener('keyup', handleKeyUp);
+
+        // Initial keyboard setup
+        createKeyboard();
+
+        function handleKeyDown(e) {
+            // Allow backspace for correction
+            if (e.key === 'Backspace') {
+                // Let the 'input' event handle the logic
+                highlightKey(e.code, true); // Highlight backspace on press
+                return;
+            }
+            // Prevent typing more characters than the sentence length
+            if (userInput.value.length >= currentSentence.length && e.key !== 'Backspace') {
+                e.preventDefault();
+            }
+            highlightKey(e.code, true);
+        }
+
+        function handleKeyUp(e) {
+            highlightKey(e.code, false);
+        }
+
+        userInput.addEventListener('blur', () => {
+            // Remove active state from all keys when input loses focus
+            document.querySelectorAll('.keyboard-key.active-key').forEach(key => {
+                key.classList.remove('active-key');
+            });
+        });
+        
+        // Add time selector to exercise controls
+        const timeSelector = document.createElement('select');
+        timeSelector.id = 'time-selector';
+        timeSelector.innerHTML = `
+            <option value="15">15 seconds</option>
+            <option value="30" selected>30 seconds</option>
+            <option value="45">45 seconds</option>
+            <option value="60">60 seconds</option>
+        `;
+        document.querySelector('.exercise-controls').insertBefore(timeSelector, startButton);
+        
+        // Add more sentences
+        sentences.english.easy.push(
+            "The sun rises early.",
+            "Birds sing sweetly.",
+            "Flowers bloom in spring.",
+            "Rain falls gently down.",
+            "Wind blows through trees."
+        );
+        
+        sentences.english.medium.push(
+            "Pack my box with five dozen liquor jugs.",
+            "How vexingly quick daft zebras jump!",
+            "The quick onyx goblin jumps over the lazy dwarf.",
+            "Waltz, nymph, for quick jigs vex Bud.",
+            "Sphinx of black quartz, judge my vow."
+        );
+        
+        sentences.english.hard.push(
+            "The quick brown fox jumps over the lazy dog while the agile cat watches silently from behind the old wooden fence.",
+            "Professional typists can achieve incredible speeds, often exceeding 100 words per minute with remarkable accuracy and precision.",
+            "A journey of a thousand miles begins with a single step, just as mastering typing starts with learning proper finger placement."
+        );
+        
+        sentences.arabic.easy.push(
+            "مرحباً بكم.",
+            "صباح الخير.",
+            "كيف حالك؟",
+            "شكراً جزيلاً.",
+            "مع السلامة."
+        );
+        
+        sentences.arabic.medium.push(
+            "العقل السليم في الجسم السليم.",
+            "خير الكلام ما قل ودل.",
+            "من جد وجد ومن زرع حصد.",
+            "الوقت من ذهب فاحفظه جيداً.",
+            "العلم نور والجهل ظلام."
+        );
+        
+        sentences.arabic.hard.push(
+            "الحياة مدرسة والتجارب هي الدروس التي نتعلم منها كل يوم جديد في مسيرتنا نحو النجاح والتقدم.",
+            "المعرفة كنز لا يفنى، وكلما ازداد الإنسان علماً ازداد تواضعاً وإدراكاً لحجم ما لا يعرفه.",
+            "الصبر والمثابرة هما مفتاح النجاح في كل المجالات، فلا تيأس من المحاولة حتى تحقق أهدافك."
+        );
+
+        // Modify startExercise function to use selected time
+        function startExercise() {
+            const language = languageSelector.value;
+            const difficulty = difficultySelector.value;
+            const timeLimit = parseInt(timeSelector.value);
+            
+            // Reset and show exercise area
+            exerciseArea.classList.remove('hidden');
+            userInput.value = '';
+            userInput.focus();
+            
+            // Clear previous timer if exists
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Initialize timer
+            let timeRemaining = timeLimit;
+            startTime = new Date();
+            updateTimer(timeRemaining);
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimer(timeRemaining);
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    endExercise();
+                }
+            }, 1000);
+            
+            // Load first sentence
+            loadNextSentence();
+        }
+
+        // Update timer display function
+        function updateTimer(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Add endExercise function
+        function endExercise() {
+            // Disable input
+            userInput.disabled = true;
+            
+            // Calculate final stats
+            const endTime = new Date();
+            const elapsedTime = (endTime - startTime) / 1000; // in seconds
+            const totalCharacters = userInput.value.length;
+            const wordsTyped = totalCharacters / 5; // assuming average word length of 5 characters
+            const wpm = Math.round((wordsTyped / elapsedTime) * 60);
+            
+            // Calculate accuracy
+            let correctChars = 0;
+            const inputText = userInput.value;
+            for(let i = 0; i < inputText.length && i < currentSentence.length; i++) {
+                if(inputText[i] === currentSentence[i]) correctChars++;
+            }
+            const accuracy = Math.round((correctChars / totalCharacters) * 100) || 0;
+            
+            // Calculate errors
+            let errors = 0;
+            // const inputText = userInput.value; // This line is removed as inputText is already defined
+            for(let i = 0; i < inputText.length; i++) {
+                if (inputText[i] !== currentSentence[i]) {
+                    errors++;
+                }
+            }
+
+            // Show results
+            showResults(wpm, accuracy, Math.round(elapsedTime), errors);
+            
+            // Enable restart after 2 seconds
+            setTimeout(() => {
+                userInput.disabled = false;
+                startButton.textContent = 'Try Again';
+            }, 2000);
+        }
+        
+        // Add loadNextSentence function
+        function loadNextSentence() {
+            const language = languageSelector.value;
+            const difficulty = difficultySelector.value;
+            const availableSentences = sentences[language][difficulty];
+            currentSentence = availableSentences[Math.floor(Math.random() * availableSentences.length)];
+            
+            // Display sentence
+            sentenceDisplay.innerHTML = '';
+            currentSentence.split('').forEach(char => {
+                const charSpan = document.createElement('span');
+                charSpan.textContent = char;
+                sentenceDisplay.appendChild(charSpan);
+            });
+            
+            // Set text direction based on language
+            if (language === 'arabic') {
+                sentenceDisplay.dir = 'rtl';
+                userInput.dir = 'rtl';
+            } else {
+                sentenceDisplay.dir = 'ltr';
+                userInput.dir = 'ltr';
+            }
+            
+            // Reset input
+            userInput.value = '';
+            updateCharacterHighlight();
+        }
+        
+        // Update checkInput function
+        function checkInput() {
+            const chars = sentenceDisplay.querySelectorAll('span');
+            const inputChars = userInput.value.split('');
+            
+            let allCorrect = true;
+            chars.forEach((char, index) => {
+                if (inputChars[index] == null) {
+                    char.classList.remove('correct');
+                    char.classList.remove('incorrect');
+                    allCorrect = false;
+                } else if (inputChars[index] === char.textContent) {
+                    char.classList.add('correct');
+                    char.classList.remove('incorrect');
+                } else {
+                    char.classList.add('incorrect');
+                    char.classList.remove('correct');
+                    allCorrect = false;
+                }
+            });
+            
+            // Load next sentence if current one is completed correctly
+            if (allCorrect && inputChars.length === chars.length) {
+                loadNextSentence();
+            }
+            
+            updateCharacterHighlight();
+        }
+        
+        // Add results chart container to exercise area
+        const resultsChart = document.createElement('div');
+        resultsChart.id = 'results-chart';
+        resultsChart.className = 'hidden';
+        exerciseArea.appendChild(resultsChart);
+        
+        // Add showResults function
+        function showResults(wpm, accuracy, time, errors) {
+            // Create results chart container
+            const resultsChart = document.createElement('div');
+            resultsChart.className = 'results-chart';
+            
+            // Add header
+            const header = document.createElement('div');
+            header.className = 'results-header';
+            header.textContent = 'Typing Test Results';
+            resultsChart.appendChild(header);
+            
+            // Add stats summary
+            const statsSummary = document.createElement('div');
+            statsSummary.className = 'stats-summary';
+            
+            // WPM stat
+            const wpmStat = document.createElement('div');
+            wpmStat.className = 'stat-item';
+            wpmStat.innerHTML = `
+                <div class="stat-label">Speed</div>
+                <div class="stat-value">${wpm}</div>
+                <div class="stat-unit">WPM</div>
+            `;
+            
+            // Accuracy stat
+            const accuracyStat = document.createElement('div');
+            accuracyStat.className = 'stat-item';
+            accuracyStat.innerHTML = `
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value">${accuracy}</div>
+                <div class="stat-unit">%</div>
+            `;
+            
+            // Time stat
+            const timeStat = document.createElement('div');
+            timeStat.className = 'stat-item';
+            timeStat.innerHTML = `
+                <div class="stat-label">Time</div>
+                <div class="stat-value">${time}</div>
+                <div class="stat-unit">sec</div>
+            `;
+            
+            statsSummary.appendChild(wpmStat);
+            statsSummary.appendChild(accuracyStat);
+            // Add Errors stat
+            const errorsStat = document.createElement('div');
+            errorsStat.className = 'stat-item';
+            
+            // Display errors
+            errorsStat.innerHTML = `
+                <div class="stat-label">Errors</div>
+                <div class="stat-value">${errors}</div>
+                <div class="stat-unit"></div>
+            `;
+            statsSummary.appendChild(errorsStat);
+            statsSummary.appendChild(timeStat);
+            resultsChart.appendChild(statsSummary);
+            
+            // Add bar chart
+            const barChart = document.createElement('div');
+            barChart.className = 'bar-chart';
+            
+            // WPM bar
+            const wpmBar = document.createElement('div');
+            wpmBar.className = 'bar-item';
+            wpmBar.innerHTML = `
+                <div class="bar-label">WPM</div>
+                <div class="bar-container">
+                    <div class="bar wpm" style="width: ${Math.min(wpm, 100)}%"></div>
+                </div>
+            `;
+            
+            // Accuracy bar
+            const accuracyBar = document.createElement('div');
+            accuracyBar.className = 'bar-item';
+            accuracyBar.innerHTML = `
+                <div class="bar-label">Accuracy</div>
+                <div class="bar-container">
+                    <div class="bar accuracy" style="width: ${accuracy}%"></div>
+                </div>
+            `;
+            
+            barChart.appendChild(wpmBar);
+            barChart.appendChild(accuracyBar);
+            resultsChart.appendChild(barChart);
+            
+            // Add to document
+            document.body.appendChild(resultsChart);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                resultsChart.remove();
+            }, 3000);
+        }
+        
+        function updateCharacterHighlight() {
+            const inputText = userInput.value;
+            const sentenceChars = sentenceDisplay.childNodes;
+            sentenceChars.forEach((span, index) => {
+                span.classList.remove('current-character');
+                if (index === inputText.length) {
+                    span.classList.add('current-character');
+                }
+            });
+        }
+
+        function calculateAccuracy(typedChars, correctChars) {
+            if (typedChars === 0) {
+                accuracyElement.textContent = '100%';
+                return;
+            }
+            const accuracy = Math.round((correctChars / typedChars) * 100);
+            accuracyElement.textContent = `${accuracy}%`;
+        }
+
+        function createKeyboard() {
+            const layout = [
+                ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backspace'],
+                ['Tab', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'Backslash'],
+                ['CapsLock', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'Enter'],
+                ['ShiftLeft', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ShiftRight'],
+                ['ControlLeft', 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'ControlRight']
+            ];
+
+            const keyDisplayNames = {
+                'Backquote': '`', 'Digit1': '1', 'Digit2': '2', 'Digit3': '3', 'Digit4': '4', 'Digit5': '5', 'Digit6': '6', 'Digit7': '7', 'Digit8': '8', 'Digit9': '9', 'Digit0': '0', 'Minus': '-', 'Equal': '=', 'Backspace': 'Backspace',
+                'Tab': 'Tab', 'KeyQ': 'Q', 'KeyW': 'W', 'KeyE': 'E', 'KeyR': 'R', 'KeyT': 'T', 'KeyY': 'Y', 'KeyU': 'U', 'KeyI': 'I', 'KeyO': 'O', 'KeyP': 'P', 'BracketLeft': '[', 'BracketRight': ']', 'Backslash': '\\',
+                'CapsLock': 'Caps Lock', 'KeyA': 'A', 'KeyS': 'S', 'KeyD': 'D', 'KeyF': 'F', 'KeyG': 'G', 'KeyH': 'H', 'KeyJ': 'J', 'KeyK': 'K', 'KeyL': 'L', 'Semicolon': ';', 'Quote': '\'', 'Enter': 'Enter',
+                'ShiftLeft': 'Shift', 'KeyZ': 'Z', 'KeyX': 'X', 'KeyC': 'C', 'KeyV': 'V', 'KeyB': 'B', 'KeyN': 'N', 'KeyM': 'M', 'Comma': ',', 'Period': '.', 'Slash': '/', 'ShiftRight': 'Shift',
+                'ControlLeft': 'Ctrl', 'MetaLeft': 'Win', 'AltLeft': 'Alt', 'Space': 'Space', 'AltRight': 'Alt', 'ControlRight': 'Ctrl'
+            };
+
+            layout.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('keyboard-row');
+                row.forEach(keyCode => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.classList.add('keyboard-key');
+                    keyDiv.textContent = keyDisplayNames[keyCode] || keyCode;
+                    keyDiv.dataset.key = keyCode;
+                    rowDiv.appendChild(keyDiv);
+                });
+                keyboardContainer.appendChild(rowDiv);
+            });
+        }
+
+        function highlightKey(keyCode, isActive) {
+            const keyElement = keyboardContainer.querySelector(`.keyboard-key[data-key="${keyCode}"]`);
+            if (keyElement) {
+                if (isActive) {
+                    keyElement.classList.add('active-key');
+                } else {
+                    keyElement.classList.remove('active-key');
+                }
+            }
+        }
+        
+        function updateTimer() {
+            const currentTime = new Date();
+            const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+            
+            const minutes = Math.floor(elapsedTime / 60).toString().padStart(2, '0');
+            const seconds = (elapsedTime % 60).toString().padStart(2, '0');
+            
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+        
+        function calculateStats() {
+            const endTime = new Date();
+            const elapsedTime = (endTime - startTime) / 1000 / 60; // in minutes
+            
+            // Calculate WPM (assuming 5 characters = 1 word)
+            const wordCount = currentSentence.length / 5;
+            const wpm = Math.round(wordCount / elapsedTime);
+            
+            // Update UI
+            wpmElement.textContent = `${wpm} WPM`;
+            // Final accuracy update
+            const inputText = userInput.value;
+            let finalCorrectChars = 0;
+            for(let i=0; i < inputText.length; i++){
+                if(inputText[i] === currentSentence[i]){
+                    finalCorrectChars++;
+                }
+            }
+            calculateAccuracy(inputText.length, finalCorrectChars);
+        }
+    </script>
+</body>
+</html>
+
+<style>
+/* Add time selector styles */
+#time-selector {
+    padding: 8px 12px;
+    margin: 0 10px;
+    border: 2px solid #4a4a4a;
+    border-radius: 5px;
+    background-color: #2a2a2a;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#time-selector:hover {
+    border-color: #6a6a6a;
+    background-color: #3a3a3a;
+}
+
+#time-selector option {
+    background-color: #2a2a2a;
+    color: #fff;
+    padding: 8px;
+}
+
+/* Update results chart styles */
+.results-chart {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    text-align: center;
+    min-width: 300px;
+    z-index: 1000;
+}
+
+.results-header {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #ffd700;
+}
+
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.stat-unit {
+    font-size: 12px;
+    color: #888;
+}
+
+.bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bar-label {
+    width: 80px;
+    text-align: right;
+    font-size: 14px;
+    color: #888;
+}
+
+.bar-container {
+    flex-grow: 1;
+    height: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    width: 0;
+    transition: width 1s ease-in-out;
+}
+
+.bar.wpm {
+    background: linear-gradient(90deg, #ffd700, #ff8c00);
+}
+
+.bar.accuracy {
+    background: linear-gradient(90deg, #00ff00, #008000);
+}
+</style>

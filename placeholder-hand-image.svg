@@ -1,0 +1,11 @@
+<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#f0f0f0" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#888">
+    Hand Position Guide Image Placeholder
+  </text>
+  <!-- Basic hand shapes as a visual cue -->
+  <path d="M150 200 Q100 150 150 100 Q200 150 150 200 Z" fill="#cccccc" />
+  <path d="M450 200 Q400 150 450 100 Q500 150 450 200 Z" fill="#cccccc" />
+  <text x="150" y="220" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#888">Left Hand</text>
+  <text x="450" y="220" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#888">Right Hand</text>
+</svg>

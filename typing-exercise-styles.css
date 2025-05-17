@@ -1,0 +1,357 @@
+/* Typing Exercise Styles */
+
+/* Main container */
+.exercise-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Exercise title */
+.exercise-title {
+    text-align: center;
+    color: #0088cc;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+/* Controls area */
+.exercise-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.exercise-controls select {
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.exercise-controls button {
+    padding: 8px 20px;
+    background-color: #0088cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.exercise-controls button:hover {
+    background-color: #006699;
+}
+
+/* Exercise area */
+.hidden {
+    display: none;
+}
+
+#exercise-area {
+    margin-top: 20px;
+}
+
+/* Sentence display */
+.sentence-container {
+    font-size: 24px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    min-height: 60px;
+}
+
+.sentence-container span {
+    position: relative;
+}
+
+.sentence-container span.correct {
+    color: #4caf50;
+}
+
+.sentence-container span.incorrect {
+    color: #f44336;
+    text-decoration: underline;
+}
+
+.sentence-container span.current-character {
+    background-color: rgba(0, 136, 204, 0.2);
+}
+
+/* User input */
+#user-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    resize: none;
+    height: 60px;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: #0088cc;
+}
+
+/* Stats display */
+#stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 18px;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+#stats span {
+    font-weight: bold;
+}
+
+/* Keyboard */
+#keyboard-container {
+    margin-top: 30px;
+    user-select: none;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.keyboard-key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    margin: 0 2px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: default;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+}
+
+.keyboard-key.wide {
+    min-width: 80px;
+}
+
+.keyboard-key.extra-wide {
+    min-width: 120px;
+}
+
+.keyboard-key.active-key {
+    background-color: #0088cc;
+    color: white;
+    transform: translateY(2px);
+    box-shadow: 0 0 2px rgba(0,0,0,0.1);
+}
+
+/* Results chart */
+.results-chart {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1a1a1a;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    color: #fff;
+    text-align: center;
+    min-width: 350px;
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.results-header {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+.stat-value {
+    color: #ffd700;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.stat-unit {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 5px;
+}
+
+/* Bar chart styles */
+.bar-chart {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.bar-item {
+    margin-bottom: 15px;
+}
+
+.bar-label {
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bar-container {
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s ease-out;
+    animation: barGrow 1s ease-out;
+}
+
+.bar.wpm {
+    background: linear-gradient(to right, #0088cc, #00c3ff);
+}
+
+.bar.accuracy {
+    background: linear-gradient(to right, #ffd700, #ffaa00);
+}
+
+@keyframes barGrow {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Fix for undefined error value */
+.stat-value.error-value {
+    color: #ff6b6b;
+    font-size: 24px;
+    animation: pulse 1.5s infinite;
+}
+
+/* Style for the error text specifically */
+.error-text {
+    color: #ff6b6b;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .exercise-title {
+        font-size: 2rem;
+    }
+    
+    .sentence-container {
+        font-size: 20px;
+    }
+    
+    .keyboard-key {
+        min-width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .keyboard-key.wide {
+        min-width: 60px;
+    }
+    
+    .keyboard-key.extra-wide {
+        min-width: 90px;
+    }
+}
+
+/* Special keyboard keys */
+.keyboard-key[data-key="Backspace"] {
+    min-width: 80px;
+}
+
+.keyboard-key[data-key="Tab"] {
+    min-width: 60px;
+}
+
+.keyboard-key[data-key="CapsLock"] {
+    min-width: 80px;
+}
+
+.keyboard-key[data-key="Enter"] {
+    min-width: 80px;
+}
+
+.keyboard-key[data-key="ShiftLeft"],
+.keyboard-key[data-key="ShiftRight"] {
+    min-width: 100px;
+}
+
+.keyboard-key[data-key="Space"] {
+    min-width: 200px;
+}
+
+/* Character highlight */
+.current-character {
+    background-color: rgba(0, 136, 204, 0.2);
+    border-bottom: 2px solid #0088cc;
+}
