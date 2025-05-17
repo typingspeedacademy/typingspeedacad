@@ -194,7 +194,7 @@ const languages = {
             "Escribir es una habilidad útil para todos.",
             "La práctica hace al maestro en toda actividad.",
             "Aprender cosas nuevas mantiene la mente aguda.",
-            "JavaScript impulsa muchos sitios web interactivos.",
+            "JavaScript alimenta muchos sitios web interactivos.",
             "La práctica regular del teclado mejora la velocidad y precisión.",
             "La computación en la nube ha revolucionado el almacenamiento de datos.",
             "La comunicación efectiva es esencial en entornos profesionales.",
@@ -594,10 +594,10 @@ function checkAuthStatus() {
     const navLinks = document.querySelector('.nav-links');
 
     if (authToken && currentUser && authButtons && navLinks) {
-        // Remove 'About' link
-        const aboutLink = navLinks.querySelector('a[href="#"]').parentElement;
-        if (aboutLink) {
-            aboutLink.remove();
+        // Remove 'About' link if it exists
+        const aboutLink = navLinks.querySelector('a[href="#"]');
+        if (aboutLink && aboutLink.parentElement) {
+            aboutLink.parentElement.remove();
         }
 
         // Replace auth buttons with profile link
@@ -694,10 +694,13 @@ function setupInlineTyping() {
     // Remove the input box if it exists
     const typingInput = document.getElementById('typing-input');
     if (typingInput) typingInput.remove();
-    // Focus the words display for accessibility
-    wordsDisplay.setAttribute('tabindex', '0');
-    wordsDisplay.focus();
-    document.addEventListener('keydown', handleTypingKeydown);
+    
+    // Only proceed if wordsDisplay exists
+    if (wordsDisplay && wordsDisplay instanceof HTMLElement) {
+        wordsDisplay.setAttribute('tabindex', '0');
+        wordsDisplay.focus();
+        document.addEventListener('keydown', handleTypingKeydown);
+    }
 }
 
 function handleTypingKeydown(e) {
@@ -865,7 +868,7 @@ function updateLevelDisplay() {
 
 const API_BASE_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:10000/api'
-    : 'https://typingspeedacademy.onrender.com/';
+    : 'https://typingspeedacademy.onrender.com/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Login Form Handling
@@ -893,6 +896,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         body: JSON.stringify({ email, password }),
                     });
+
+                    // Check if response is JSON before parsing
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Server returned non-JSON response: ${await response.text()}`);
+                    }
 
                     const data = await response.json();
 
