@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- Background -->
+  <rect x="0" y="0" width="800" height="600" fill="#e8f0fe" opacity="0.5"/>
+  
+  <!-- Desk -->
+  <rect x="100" y="400" width="600" height="20" rx="5" fill="#4285f4" opacity="0.8"/>
+  
+  <!-- Laptop base -->
+  <rect x="250" y="320" width="300" height="20" rx="5" fill="#202124"/>
+  <rect x="240" y="340" width="320" height="60" rx="10" fill="#202124"/>
+  
+  <!-- Laptop screen -->
+  <rect x="260" y="180" width="280" height="140" rx="5" fill="#202124"/>
+  <rect x="270" y="190" width="260" height="120" rx="2" fill="#ffffff"/>
+  
+  <!-- Text on screen -->
+  <rect x="290" y="210" width="220" height="10" rx="2" fill="#1a73e8" opacity="0.7"/>
+  <rect x="290" y="230" width="180" height="10" rx="2" fill="#1a73e8" opacity="0.5"/>
+  <rect x="290" y="250" width="200" height="10" rx="2" fill="#1a73e8" opacity="0.6"/>
+  <rect x="290" y="270" width="160" height="10" rx="2" fill="#1a73e8" opacity="0.4"/>
+  
+  <!-- Keyboard -->
+  <rect x="270" y="350" width="260" height="40" rx="5" fill="#5f6368" opacity="0.8"/>
+  
+  <!-- Keyboard keys -->
+  <rect x="280" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="300" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="320" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="340" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="360" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="380" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="400" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="420" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="440" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="460" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="480" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="500" y="355" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  
+  <rect x="290" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="310" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="330" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="350" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="370" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="390" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="410" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="430" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="450" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="470" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="490" y="370" width="15" height="10" rx="2" fill="#ffffff" opacity="0.6"/>
+  
+  <!-- Hands -->
+  <ellipse cx="350" cy="420" rx="40" ry="20" fill="#f8f9fa" opacity="0.9"/>
+  <ellipse cx="450" cy="420" rx="40" ry="20" fill="#f8f9fa" opacity="0.9"/>
+  
+  <!-- Fingers -->
+  <rect x="330" y="390" width="8" height="30" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  <rect x="345" y="385" width="8" height="35" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  <rect x="360" y="380" width="8" height="40" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  <rect x="375" y="385" width="8" height="35" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  
+  <rect x="430" y="390" width="8" height="30" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  <rect x="445" y="385" width="8" height="35" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  <rect x="460" y="380" width="8" height="40" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  <rect x="475" y="385" width="8" height="35" rx="4" fill="#f8f9fa" opacity="0.9"/>
+  
+  <!-- Speed lines -->
+  <line x1="330" y1="370" x2="310" y2="350" stroke="#1a73e8" stroke-width="2" opacity="0.7"/>
+  <line x1="380" y1="370" x2="360" y2="350" stroke="#1a73e8" stroke-width="2" opacity="0.7"/>
+  <line x1="430" y1="370" x2="410" y2="350" stroke="#1a73e8" stroke-width="2" opacity="0.7"/>
+  <line x1="480" y1="370" x2="460" y2="350" stroke="#1a73e8" stroke-width="2" opacity="0.7"/>
+  
+  <!-- WPM counter -->
+  <rect x="550" y="230" width="80" height="40" rx="5" fill="#1a73e8" opacity="0.9"/>
+  <text x="590" y="255" font-family="Arial" font-size="16" fill="white" text-anchor="middle" font-weight="bold">75 WPM</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="150" r="50" fill="#1a73e8" opacity="0.1"/>
+  <circle cx="650" cy="300" r="70" fill="#1a73e8" opacity="0.1"/>
+  <circle cx="400" cy="100" r="60" fill="#1a73e8" opacity="0.1"/>
+</svg>
