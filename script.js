@@ -356,7 +356,7 @@ const languages = {
             "JavaScript驱动着许多交互式网站。",
             "定期键盘练习提高打字速度和准确性。",
             "云计算彻底改变了现代数据存储解决方案。",
-            "有效沟通在专业环境中至关重要。",
+            "有效沟通在专业环境中很重要。",
             "可持续发展平衡经济增长与环境保护。",
             "批判性思维技能有助于高效解决复杂问题。",
             "数字素养在当今世界变得越来越重要。",
@@ -366,7 +366,7 @@ const languages = {
             "网络安全措施保护敏感信息免受威胁。"
         ],
         hard: [
-            "无处不在的计算无缝地促进了日常工作。",
+            "无处不在的计算无缝地促进日常工作。",
             "哲学探究常常挑战传统智慧。",
             "不同文化的融合丰富了社会。",
             "短暂的瞬间可能具有深远的意义。",
@@ -586,7 +586,40 @@ function startTimer() {
 
 
 
+// Add authentication check function
+function checkAuthStatus() {
+    const authToken = localStorage.getItem('authToken');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const authButtons = document.querySelector('.auth-buttons');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (authToken && currentUser && authButtons && navLinks) {
+        // Remove 'About' link
+        const aboutLink = navLinks.querySelector('a[href="#"]').parentElement;
+        if (aboutLink) {
+            aboutLink.remove();
+        }
+
+        // Replace auth buttons with profile link
+        authButtons.innerHTML = `
+            <div class="profile-section">
+                <span>Welcome, ${currentUser.user_metadata?.full_name || 'User'}!</span>
+                <button onclick="logout()" class="btn btn-outline">Logout</button>
+            </div>
+        `;
+    }
+}
+
+// Add logout function
+function logout() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+}
+
+// Add to DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
+    checkAuthStatus();
     initializeWords();
     resetExerciseState();
     setupInlineTyping();
@@ -830,7 +863,9 @@ function updateLevelDisplay() {
     }
 }
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:10000/api'
+    : 'https://typingspeedacademy.onrender.com/';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Login Form Handling

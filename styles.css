@@ -48,6 +48,22 @@ ul {
     border-radius: 4px;
     font-weight: 500;
     cursor: pointer;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-section span {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.profile-section .btn-outline {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
     transition: all 0.3s ease;
 }
 
