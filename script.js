@@ -5,6 +5,96 @@ const timerDisplay = document.getElementById('timer-display');
 const wordsDisplay = document.querySelector('.words-display p');
 const levelDisplay = document.getElementById('level-display');
 
+// Auth Forms
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+
+// Mock user database
+let users = JSON.parse(localStorage.getItem('users')) || [];
+
+// Show notification function - without displaying any notifications
+function showNotification(message, type, actionLink = '') {
+    // Silently handle the notification without displaying anything
+    // This function is intentionally empty to prevent notifications from showing
+    
+    // If it's a success notification, proceed with redirection
+    if (type === 'success') {
+        if (message.includes('Login successful')) {
+            window.location.href = 'typing-exercise.html';
+        } else if (message.includes('Account created')) {
+            window.location.href = 'login.html';
+        }
+    }
+}
+
+// Handle signup form
+if (signupForm) {
+    signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+
+        // Check if email already exists
+        if (users.some(user => user.email === email)) {
+            // Redirect to login page directly without notification
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Validate password match
+        if (password !== confirmPassword) {
+            showNotification('Passwords do not match', 'error');
+            return;
+        }
+
+        // Create new user
+        const newUser = { name, email, password };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Redirect directly without notification
+        window.location.href = 'login.html';
+    });
+}
+
+// Handle login form
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+
+        // Find user
+        const user = users.find(u => u.email === email && u.password === password);
+        
+        if (!user) {
+            showNotification('Invalid email or password', 'error');
+            return;
+        }
+
+        // Redirect directly without notification
+        window.location.href = 'typing-exercise.html';
+    });
+}
+
 // Control buttons
 const punctuationBtn = document.getElementById('punctuation-btn');
 const numbersBtn = document.getElementById('numbers-btn');
@@ -600,10 +690,11 @@ function checkAuthStatus() {
             aboutLink.parentElement.remove();
         }
 
-        // Replace auth buttons with profile link
+        // Replace auth buttons with profile link and user's name
+        const userName = currentUser.name || currentUser.user_metadata?.full_name || 'User';
         authButtons.innerHTML = `
             <div class="profile-section">
-                <span>Welcome, ${currentUser.user_metadata?.full_name || 'User'}!</span>
+                <span>Welcome, ${userName}!</span>
                 <button onclick="logout()" class="btn btn-outline">Logout</button>
             </div>
         `;
@@ -622,166 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuthStatus();
     initializeWords();
     resetExerciseState();
-    setupInlineTyping();
-
-    loadSavedSettings(); // Load saved language and difficulty
-    setupSelectors(); // Setup language and difficulty selector event listeners
-    // initializeWords(); // Called by resetExerciseState
-    resetExerciseState(); // Ensure the state is correct on initial load
-});
-
-function loadSavedSettings() {
-    const savedLanguage = localStorage.getItem('selectedLanguage');
-    if (savedLanguage && languages[savedLanguage]) {
-        currentLanguage = savedLanguage;
-    }
-    if (languageSelector) languageSelector.value = currentLanguage;
-
-    const savedDifficulty = localStorage.getItem('selectedDifficulty');
-    if (savedDifficulty && languages[currentLanguage] && languages[currentLanguage][savedDifficulty]) {
-        currentDifficulty = savedDifficulty;
-    }
-    if (difficultySelector) difficultySelector.value = currentDifficulty;
-}
-
-function setupSelectors() {
-    if (languageSelector) {
-        if (languageSelector.tagName === 'SELECT') {
-            Object.keys(languages).forEach(langCode => {
-                const option = document.createElement('option');
-                option.value = langCode;
-                let langName = langCode;
-                if(langCode === 'en') langName = 'English';
-                if(langCode === 'es') langName = 'Español';
-                if(langCode === 'fr') langName = 'Français';
-                if(langCode === 'de') langName = 'Deutsch';
-                if(langCode === 'zh') langName = '中文';
-                if(langCode === 'ar') langName = 'العربية';
-                option.textContent = langName;
-                languageSelector.appendChild(option);
-            });
-            languageSelector.value = currentLanguage; // Set initial value after populating
-        }
-        languageSelector.addEventListener('change', (event) => {
-            changeLanguage(event.target.value);
-        });
-    }
-
-    if (difficultySelector) {
-        if (difficultySelector.tagName === 'SELECT') {
-            const difficulties = ['easy', 'normal', 'hard']; // Define available difficulties
-            difficulties.forEach(diff => {
-                const option = document.createElement('option');
-                option.value = diff;
-                option.textContent = diff.charAt(0).toUpperCase() + diff.slice(1); // Capitalize
-                difficultySelector.appendChild(option);
-            });
-            difficultySelector.value = currentDifficulty; // Set initial value after populating
-        }
-        difficultySelector.addEventListener('change', (event) => {
-            changeDifficulty(event.target.value);
-        });
-    }
-}
-
-// Remove old language setup functions if they exist to avoid conflicts
-// function loadSavedLanguage() { ... } // Now part of loadSavedSettings
-// function setupLanguageSelector() { ... } // Now part of setupSelectors
-
-
-
-function setupInlineTyping() {
-    // Remove the input box if it exists
-    const typingInput = document.getElementById('typing-input');
-    if (typingInput) typingInput.remove();
-    
-    // Only proceed if wordsDisplay exists
-    if (wordsDisplay && wordsDisplay instanceof HTMLElement) {
-        wordsDisplay.setAttribute('tabindex', '0');
-        wordsDisplay.focus();
-        document.addEventListener('keydown', handleTypingKeydown);
-    }
-}
-
-function handleTypingKeydown(e) {
-    if (!words || words.length === 0) return;
-    // Start timer only if it hasn't started and it's at the initial timeLeft value
-    // This prevents restarting the timer if the user pauses and resumes by clicking out/in
-    if (!typingStarted && timeLeft === parseInt(document.querySelector('.time-options-dark span.active-time')?.textContent || '30')) {
-        typingStarted = true;
-        startTimer();
-    }
-    if (e.key === ' ') {
-        e.preventDefault();
-        const expected = words[currentWordIndex] || '';
-        if (currentInput.trim() === expected) {
-            correctChars += expected.length;
-        }
-        typedChars += currentInput.trim().length;
-        currentWordIndex++;
-        currentInput = '';
-        if (currentWordIndex >= words.length) {
-            // Sentence finished, move to next sentence
-            currentLevel++;
-            const langData = languages[currentLanguage] || languages['en'];
-            const difficultySentences = langData[currentDifficulty] || langData['normal'];
-            if (currentLevel > difficultySentences.length) {
-                currentLevel = 1; // Loop back to the first sentence
-            }
-            resetExerciseState(false); // Soft reset: keep time, WPM, accuracy, just load new sentence
-            return;
-        }
-        renderWords();
-        updateWPMDisplay();
-        updateAccuracyDisplay();
-        return;
-    }
-    if (e.key === 'Backspace') {
-        if (currentInput.length > 0) {
-            currentInput = currentInput.slice(0, -1);
-        }
-    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        currentInput += e.key;
-    }
-    const expected = words[currentWordIndex] || '';
-    let isCorrectSoFar = expected.startsWith(currentInput);
-    let isWordComplete = currentInput === expected;
-    typedChars++;
-    if (isCorrectSoFar) {
-        correctChars++;
-    } else {
-        incorrectChars++;
-    }
-    renderWords();
-    updateAccuracyDisplay();
-    updateWPMDisplay();
-}
-
-console.log('Script loaded. Inline typing functions are being set up.');
-// Add minimal CSS for cursor and feedback
-const style = document.createElement('style');
-style.innerHTML = `
-.inline-cursor { display: inline-block; width: 1ch; color: #8be9fd; animation: blink 1s steps(1) infinite; vertical-align: bottom; }
-@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-.typed-correct-char { color: #50fa7b; font-weight: bold; }
-.typed-incorrect-char { color: #ff5555; font-weight: bold; text-decoration: underline; }
-.untyped-char { color: #bfbfbf; }
-.current-word { background: rgba(139,233,253,0.08); border-radius: 4px; padding: 0 2px; }
-.typed-underline { border-bottom: 2px solid #44475a; padding-bottom: 2px; }
-.words-display-dark.rtl-text { direction: rtl; text-align: right; }
-.words-display-dark.rtl-text .current-word .inline-cursor:first-child { margin-left: 0; margin-right: -1ch; } /* Adjust cursor for RTL */
-.words-display-dark.rtl-text .current-word .inline-cursor:last-child { margin-left: -1ch; margin-right: 0; } /* Adjust cursor for RTL */
-.typed-underline-anim { border-bottom: 2px solid #bd93f9; padding-bottom: 2px; animation: underlinePop 0.2s cubic-bezier(.68,-0.55,.27,1.55); }
-@keyframes underlinePop { 0% { border-bottom-width: 0; } 100% { border-bottom-width: 2px; } }
-`;
-document.head.appendChild(style);
-
-
-
-// Modify resetExerciseState to correctly reset timeLeft based on selection
-document.addEventListener('DOMContentLoaded', () => {
-    initializeWords();
-    resetExerciseState(); // Call reset before setting up time options
     setupInlineTyping();
 
 
@@ -912,8 +843,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     if (data.session && data.session.access_token) {
+                        // Store user data including name
+                        const userData = {
+                            ...data.user,
+                            name: data.user.user_metadata?.full_name || data.user.user_metadata?.name || 'User'
+                        };
                         localStorage.setItem('authToken', data.session.access_token);
-                        localStorage.setItem('currentUser', JSON.stringify(data.user));
+                        localStorage.setItem('currentUser', JSON.stringify(userData));
                         loginForm.reset();
                         window.location.href = 'index.html';
                     } else {
@@ -952,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (password !== confirmPassword) {
-                    alert('Passwords do not match!');
+                    alert('Passwords do not match');
                     return;
                 }
 
@@ -990,4 +926,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+});
+
+
+// Hero Section Typing Animation
+// Typing animation functionality
+function typeText() {
+    const text = "Type faster, work smarter";
+    const typingText = document.querySelector('.typing-text');
+    let charIndex = 0;
+
+    function type() {
+        if (charIndex < text.length) {
+            typingText.textContent = text.substring(0, charIndex + 1);
+            charIndex++;
+            setTimeout(type, 100);
+        } else {
+            setTimeout(eraseText, 2000);
+        }
+    }
+
+    type();
+}
+
+function eraseText() {
+    const typingText = document.querySelector('.typing-text');
+    let text = typingText.textContent;
+
+    function erase() {
+        if (text.length > 0) {
+            text = text.substring(0, text.length - 1);
+            typingText.textContent = text;
+            setTimeout(erase, 50);
+        } else {
+            setTimeout(typeText, 1000);
+        }
+    }
+
+    erase();
+}
+
+// Start the typing animation when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(typeText, 1000);
 });

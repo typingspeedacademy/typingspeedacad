@@ -12,11 +12,7 @@
     --gradient-blue: linear-gradient(135deg, #4A90E2, #50E3C2); /* Updated gradient */
     --gradient-light: linear-gradient(135deg, #EAF2FA, #F4F7F9); /* Updated light gradient */
     
-    /* Monkeytype style variables */
-    --monkeytype-bg: #2C2F33; /* Slightly darker, more neutral dark bg */
-    --monkeytype-text: #99AAB5; /* Lighter text for better contrast on dark bg */
-    --monkeytype-text-hover: #FFFFFF; /* White for hover */
-    --monkeytype-accent: #7289DA; /* Discord-like blurple, a common "modern" accent */
+    /* Custom theme variables */
 }
 
 * {
@@ -67,42 +63,7 @@ ul {
     transition: all 0.3s ease;
 }
 
-/* Monkeytype Style Buttons */
-.monkeytype-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--monkeytype-bg);
-    padding: 0.8rem 1rem;
-    border-radius: 0.5rem;
-    gap: 1rem;
-}
 
-.monkeytype-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--monkeytype-text);
-    background-color: transparent;
-    border: none;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    font-weight: 400;
-}
-
-.monkeytype-btn:hover {
-    color: var(--monkeytype-text-hover);
-}
-
-.monkeytype-btn.active {
-    color: var(--monkeytype-text-hover);
-}
-
-.monkeytype-btn i {
-    margin-right: 0.5rem;
-}
 
 .btn-primary {
     background: var(--gradient-blue);
@@ -714,6 +675,62 @@ footer {
     box-shadow: var(--shadow);
     border-top: 4px solid var(--primary-color);
     background-image: linear-gradient(to bottom, rgba(0, 86, 179, 0.03), rgba(255, 255, 255, 0));
+    position: relative;
+}
+
+.notification {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: slideDown 0.3s ease forwards;
+}
+
+.notification.error {
+    background-color: #ffe6e6;
+    color: #d63031;
+    border: 1px solid #fab1a0;
+}
+
+.notification.success {
+    background-color: #e6ffe6;
+    color: #00b894;
+    border: 1px solid #55efc4;
+}
+
+.notification.warning {
+    background-color: #fff3e6;
+    color: #e17055;
+    border: 1px solid #ffeaa7;
+}
+
+.notification .action-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: var(--gradient-blue);
+    color: var(--white);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.notification .action-link:hover {
+    transform: translateY(-1px);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .auth-header {
@@ -1890,7 +1907,7 @@ footer {
 }
 
 /* Add a white version of the logo for the dark theme */
-/* You'll need to create this SVG: images/monkeytype_logo_white.svg */
+
 /* For now, we can try to invert the existing one if it's simple enough, or use text */
 
 /* Responsive adjustments for smaller screens */
@@ -2316,6 +2333,62 @@ footer {
     box-shadow: var(--shadow);
     border-top: 4px solid var(--primary-color);
     background-image: linear-gradient(to bottom, rgba(0, 86, 179, 0.03), rgba(255, 255, 255, 0));
+    position: relative;
+}
+
+.notification {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: slideDown 0.3s ease forwards;
+}
+
+.notification.error {
+    background-color: #ffe6e6;
+    color: #d63031;
+    border: 1px solid #fab1a0;
+}
+
+.notification.success {
+    background-color: #e6ffe6;
+    color: #00b894;
+    border: 1px solid #55efc4;
+}
+
+.notification.warning {
+    background-color: #fff3e6;
+    color: #e17055;
+    border: 1px solid #ffeaa7;
+}
+
+.notification .action-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: var(--gradient-blue);
+    color: var(--white);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.notification .action-link:hover {
+    transform: translateY(-1px);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .auth-header {
