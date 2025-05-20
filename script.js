@@ -419,10 +419,10 @@ let currentLevel = 1;
 const totalLevels = 50;
 let words = [];
 let currentInput = '';
-    typingStarted = false;
-    currentLanguage = 'en';
-    typedChars = 0;
-    correctChars = 0;
+let typingStarted = false;
+let currentLanguage = 'en';
+typedChars = 0;
+correctChars = 0;
     incorrectChars = 0;
 let currentDifficulty = 'normal';
 

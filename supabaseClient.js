@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 // User's Supabase Project URL and Anon Key
 const supabaseUrl = 'https://uczbnyiglcswxjaqswpy.supabase.co';
@@ -12,4 +12,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-module.exports = { supabase };
+export { supabase };
