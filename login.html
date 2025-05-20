@@ -16,6 +16,11 @@
                 <li><a href="free-exercises.html">Free Exercises</a></li>
                 <li><a href="premium.html">Premium Course</a></li>
             </ul>
+            <div class="language-switcher">
+                <select id="site-language-selector" onchange="changeSiteLanguage(this.value)">
+                    <option value="english">English</option>
+                </select>
+            </div>
             <div class="auth-buttons">
                 <a href="login.html" class="btn btn-outline">Login</a>
                 <a href="signup.html" class="btn btn-primary">Sign Up</a>
@@ -41,7 +46,7 @@
             <button type="submit" class="btn">Login</button>
         </form>
         <div class="auth-footer">
-            <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+            <p id="auth-switch-message"></p>
             <p><a href="#">Forgot password?</a></p>
         </div>
     </div>

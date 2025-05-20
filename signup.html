@@ -28,8 +28,7 @@
             <h2>Create Your Account</h2>
             <p>Join Typing Speed Academy today and start improving your typing skills!</p>
         </div>
-        <div id="notification" class="notification" style="display: none;"></div>
-        <form class="auth-form" id="signupForm">
+        <form class="auth-form">
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" required>
@@ -87,6 +86,19 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Email exists modal -->
+    <div id="emailExistsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Account Already Exists</h3>
+            <p>An account with this email already exists.</p>
+            <div class="modal-buttons">
+                <button onclick="window.location.href='login.html'" class="btn btn-primary">Go to Login</button>
+                <button onclick="closeEmailExistsModal()" class="btn btn-outline">Stay Here</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="supabaseClient.js" type="module"></script>
+    <script src="script.js" type="module"></script>
 </body>
 </html>
